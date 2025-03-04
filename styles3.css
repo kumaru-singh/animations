@@ -1,0 +1,60 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+/* Now you can use the font in your CSS */
+body {
+    /* font-family: 'Roboto', sans-serif; */
+    background-color:white;
+    /* font-family:"Poppins", sans-serif; */
+    font-family: "Poppins", "Roboto", sans-serif;
+    padding: 0;
+    margin: 0;
+}
+
+section{
+    display: grid;
+    place-items: center;
+    align-content: center;
+    min-height: 100vh;
+}
+
+.hidden{
+    /* opacity:0;
+    filter:blur(5px);
+    transform: translate(-100%);
+    transition: all 1s; */
+    opacity: 0;
+    filter: blur(5px);
+    transform: translateX(-100%); /* Use translateX instead */
+    transition: all 1s ease-in-out;
+}
+
+.show{
+    opacity:1;
+    /* transition: all 0.5s ease-in-out; */
+    filter:blur(0);
+    transform: translate(0);
+}
+
+.logos{
+    display: flex;
+    /* justify-content: center;
+    align-items: center;
+    gap: 1rem; */
+}
+.logo:nth-child(2){
+    transition-delay: 200ms;
+}
+
+.logo:nth-child(3){
+    transition-delay: 400ms;
+}
+
+.logo:nth-child(4){
+    transition-delay: 600ms;
+}
+
+/* @media(prefers-reduced-motion){
+    .hidden {
+        transition:none;
+    }
+} */

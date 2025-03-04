@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metaverse Avatar Customizer</title>
+    <script src="https://cdn.babylonjs.com/babylon.js"></script>
+    <style>
+        html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; background: black; color: white; }
+        canvas { width: 100%; height: 100%; display: block; }
+        /* .controls { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 8px; }
+        button { margin: 5px; padding: 8px; cursor: pointer; } */
+                controls { 
+            position: absolute; 
+            top: 10px; 
+            left: 10px; 
+            background: rgba(0, 0, 0, 0.7); 
+            padding: 15px; 
+            border-radius: 12px; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 10px; 
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        button { 
+            background: linear-gradient(135deg, #ff416c, #ff4b2b); /* Gradient background */
+            color: white; 
+            font-size: 16px;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px; 
+            cursor: pointer; 
+            transition: all 0.3s ease-in-out; 
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            outline: none;
+            box-shadow: 0 4px 6px rgba(255, 75, 43, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Glow & Hover Effect */
+        button:hover { 
+            background: linear-gradient(135deg, #ff4b2b, #ff416c); 
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(255, 75, 43, 0.8);
+        }
+
+        /* Click Effect */
+        button:active { 
+            transform: scale(0.95);
+        }
+
+        /* Animated Shine Effect */
+        button::before { 
+            content: ''; 
+            position: absolute; 
+            top: 0; 
+            left: -100%;
+            width: 100%; 
+            height: 100%; 
+            background: rgba(255, 255, 255, 0.3); 
+            transform: skewX(-45deg); 
+            transition: left 0.5s ease-in-out;
+        }
+
+        button:hover::before { 
+            left: 150%; 
+        }
+
+
+        
+    </style>
+</head>
+<body>
+    <canvas id="renderCanvas"></canvas>
+    <div class="controls">
+        <button onclick="changeColor('skin')">Random Skin</button>
+        <button onclick="changeColor('hair')">Random Hair</button>
+        <button onclick="changeColor('shirt')">Random Shirt</button>
+        <button onclick="toggleHat()">Toggle Hat</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById("renderCanvas");
+        const engine = new BABYLON.Engine(canvas, true);
+        let hat;
+
+        const createScene = () => {
+            const scene = new BABYLON.Scene(engine);
+            scene.clearColor = new BABYLON.Color4(0, 0, 0, 1);
+
+            // Camera
+            const camera = new BABYLON.ArcRotateCamera("camera", Math.PI / 2, Math.PI / 3, 5, BABYLON.Vector3.Zero(), scene);
+            camera.attachControl(canvas, true);
+
+            // Light
+            const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
+            light.intensity = 1.2;
+
+            // Avatar Body Parts
+            const body = BABYLON.MeshBuilder.CreateSphere("body", {diameter: 1.5}, scene);
+            body.position.y = 1;
+            const head = BABYLON.MeshBuilder.CreateSphere("head", {diameter: 1}, scene);
+            head.position.y = 2.5;
+            const shirt = BABYLON.MeshBuilder.CreateCylinder("shirt", {diameterTop: 1.2, diameterBottom: 1.5, height: 1}, scene);
+            shirt.position.y = 1.5;
+
+            // Hat (Initially hidden)
+            hat = BABYLON.MeshBuilder.CreateCylinder("hat", {diameter: 1, height: 0.3}, scene);
+            hat.position.y = 3;
+            hat.isVisible = false;
+
+            // Materials
+            const skinMat = new BABYLON.StandardMaterial("skinMat", scene);
+            const hairMat = new BABYLON.StandardMaterial("hairMat", scene);
+            const shirtMat = new BABYLON.StandardMaterial("shirtMat", scene);
+            const hatMat = new BABYLON.StandardMaterial("hatMat", scene);
+            
+            // Assign Materials
+            head.material = skinMat;
+            body.material = skinMat;
+            shirt.material = shirtMat;
+            hat.material = hatMat;
+
+            // Functions to change colors
+            const randomColor = () => new BABYLON.Color3(Math.random(), Math.random(), Math.random());
+
+            window.changeColor = (part) => {
+                if (part === "skin") skinMat.diffuseColor = randomColor();
+                if (part === "hair") hairMat.diffuseColor = randomColor();
+                if (part === "shirt") shirtMat.diffuseColor = randomColor();
+            };
+
+            window.toggleHat = () => {
+                hat.isVisible = !hat.isVisible;
+                hatMat.diffuseColor = randomColor();
+            };
+
+            return scene;
+        };
+
+        const scene = createScene();
+        engine.runRenderLoop(() => scene.render());
+        window.addEventListener("resize", () => engine.resize());
+    </script>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>String Wave Animation</title>
+    <script src="https://cdn.babylonjs.com/babylon.js"></script>
+    <style>
+        * { margin: 0; padding: 0; overflow: hidden; }
+        html, body, canvas { width: 100%; height: 100%; display: block; background: black; }
+    </style>
+</head>
+<body>
+    <canvas id="renderCanvas"></canvas>
+
+    <script>
+        window.addEventListener("DOMContentLoaded", function () {
+            const canvas = document.getElementById("renderCanvas");
+            const engine = new BABYLON.Engine(canvas, true);
+            const scene = new BABYLON.Scene(engine);
+            scene.clearColor = new BABYLON.Color4(0, 0, 0, 1);
+
+            // Camera
+            const camera = new BABYLON.ArcRotateCamera("camera", Math.PI / 2, Math.PI / 3, 20, BABYLON.Vector3.Zero(), scene);
+            camera.attachControl(canvas, true);
+
+            // Light
+            const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
+            light.intensity = 1;
+
+            // Wave Properties
+            const numPoints = 100;
+            let waveAmplitude = 2;
+            let waveFrequency = 1;
+            let waveSpeed = 0.03;
+            let time = 0;
+
+            // Create Wave Path
+            function createWavePath() {
+                let path = [];
+                for (let i = 0; i < numPoints; i++) {
+                    let x = i * 0.3 - (numPoints * 0.3) / 2;
+                    let y = Math.sin(x * waveFrequency + time) * waveAmplitude;
+                    let z = 0;
+                    path.push(new BABYLON.Vector3(x, y, z));
+                }
+                return path;
+            }
+
+            // Create Tube (Smooth Wave)
+            let tube = BABYLON.MeshBuilder.CreateTube("tube", { path: createWavePath(), radius: 0.2, updatable: true }, scene);
+            let mat = new BABYLON.StandardMaterial("mat", scene);
+            mat.emissiveColor = new BABYLON.Color3(0, 1, 1);
+            tube.material = mat;
+
+            // Animate the Wave
+            scene.registerBeforeRender(() => {
+                time += waveSpeed;
+                tube = BABYLON.MeshBuilder.CreateTube("tube", { path: createWavePath(), instance: tube });
+            });
+
+            // Render Loop
+            engine.runRenderLoop(() => scene.render());
+            window.addEventListener("resize", () => engine.resize());
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon Cyber Grid (TRON Style)</title>
+    <script src="https://cdn.babylonjs.com/babylon.js"></script>
+    <script src="https://cdn.babylonjs.com/materialsLibrary/babylon.gridMaterial.min.js"></script>
+    <style>
+        html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; background: black; }
+        canvas { width: 100%; height: 100%; display: block; }
+    </style>
+</head>
+<body>
+    <canvas id="renderCanvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById("renderCanvas");
+        const engine = new BABYLON.Engine(canvas, true);
+
+        const createScene = () => {
+            const scene = new BABYLON.Scene(engine);
+            // scene.clearColor = new BABYLON.Color4(50, 0, 255, 1); // Black background
+            scene.registerBeforeRender(() => {
+                let time = performance.now() * 2; // Smooth time shift
+                let r = (Math.sin(time) + 1) / 2; // Oscillating between 0 and 1
+                let g = (Math.cos(time * 1.2) + 1) / 2;
+                let b = (Math.sin(time * 1.5) + 1) / 2;
+                neonMat1.emissiveColor = new BABYLON.Color3(r, g, b); // Shifting glow effect
+                });
+
+
+            // Camera
+            const camera = new BABYLON.ArcRotateCamera("camera", Math.PI / 2, Math.PI / 3, 15, BABYLON.Vector3.Zero(), scene);
+            camera.attachControl(canvas, true);
+
+            // Lights
+            const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(78, 1, 0), scene);
+            light.intensity = 0.5;
+
+            // Neon Grid Floor
+            const grid = BABYLON.MeshBuilder.CreateGround("grid", {width: 10, height:20000, length:100}, scene);
+            const gridMat = new BABYLON.GridMaterial("gridMat", scene);
+            gridMat.mainColor = new BABYLON.Color3(0, 0, 0);  // Black base
+            // gridMat.mainColor = new BABYLON.Color(0, 0, 0);  // Black base
+            // gridMat.mainColor = new BABYLON.Color4(0, 0, 0);  // Black base
+            gridMat.lineColor = new BABYLON.Color3(1, 0, 1); // Neon blue lines
+            gridMat.majorUnitFrequency = 5; // Major grid lines every 5 units
+            gridMat.minorUnitVisibility = 0.45; // Minor grid lines visibility
+
+            gridMat.gridRatio = 0.5; // Thin lines
+            grid.material = gridMat;
+
+            // Neon Light Cycles (TRON Bikes)
+            const bike1 = BABYLON.MeshBuilder.CreateCylinder("bike1", {diameter: 1, height: 2}, scene);
+            bike1.position.y = 1;
+            bike1.position.x = 1;
+
+            const bike2 = BABYLON.MeshBuilder.CreateCylinder("bike2", {diameter: 1, height: 0.5}, scene);
+            bike2.position.y = 1;
+            bike2.position.x = 2;
+            bike2.position.z = -5;
+
+            const bike3 = BABYLON.MeshBuilder.CreateCylinder("bike3", {diameter: 2, height: 1}, scene);
+            bike3.position.y = 1;
+            bike3.position.x = 3;
+            bike3.position.z = 5;
+
+            // const bike4 = BABYLON.MeshBuilder.CreateCylinder("bike2", {diameter: 1, height: 3}, scene);
+            
+            
+
+            const bike4 = BABYLON.MeshBuilder.CreateCylinder("bike4", { height: 4, diameter: 2, tessellation: 32 }, scene);
+
+            bike4.updateMeshPositions((positions) => {
+                for (let i = 0; i < positions.length; i += 3) {
+                    let y = positions[i + 1];  
+                    positions[i] += 0.3 * Math.sin(y * 3); // Adds a wavy effect
+                }
+            });
+            bike4.position.y = 1;
+            bike4.position.x = -2;
+            bike4.position.z = -9;
+
+
+            const hourglass = BABYLON.MeshBuilder.CreateCylinder("hourglass", { height: 4, diameterTop: 1, diameterBottom: 1, diameterMiddle: 3, tessellation: 24 
+            }, scene);
+            hourglass.position.y = 1;
+            hourglass.position.x = 3;
+            hourglass.position.z = 1;
+
+
+
+                scene.registerBeforeRender(() => {
+                let time = performance.now() * 0.0001;
+                    neonMat1.emissiveColor = new BABYLON.Color3(Math.sin(time), Math.cos(time), Math.sin(time * 1.5));
+                });
+
+                scene.registerBeforeRender(() => {
+                let time = performance.now() * 0.05;
+                    neonMat2.emissiveColor = new BABYLON.Color3(Math.sin(time), Math.cos(time), Math.sin(time * 1.5));
+                });
+
+                scene.registerBeforeRender(() => {
+                let time = performance.now() * 0.01;
+                    neonMat3.emissiveColor = new BABYLON.Color3(Math.sin(time), Math.cos(time), Math.sin(time * 1.5));
+                });
+
+                scene.registerBeforeRender(() => {
+                let time = performance.now() * 0.001;
+                    neonMat4.emissiveColor = new BABYLON.Color3(Math.sin(time), Math.cos(time), Math.sin(time * 1.5));
+                });
+
+            // Neon Material
+            const neonMat1 = new BABYLON.StandardMaterial("neonMat1", scene);
+            neonMat1.emissiveColor = new BABYLON.Color3(1, 0, 0); // Red glow
+            bike1.material = neonMat1;
+
+            const neonMat2 = new BABYLON.StandardMaterial("neonMat2", scene);
+            neonMat2.emissiveColor = new BABYLON.Color3(0, 0, 1); // Blue glow
+            bike2.material = neonMat2;
+
+            const neonMat3 = new BABYLON.StandardMaterial("neonMat3", scene);
+            neonMat2.emissiveColor = new BABYLON.Color3(0, 0, 1); // Blue glow
+            bike3.material = neonMat3;
+
+            const neonMat4 = new BABYLON.StandardMaterial("neonMat4", scene);
+            neonMat2.emissiveColor = new BABYLON.Color3(0, 1, 1); // Blue glow
+            bike4.material = neonMat4;
+
+            hourglass.material = new BABYLON.StandardMaterial("hourglassMat", scene);
+            hourglass.material.emissiveColor = new BABYLON.Color3(0, 1, 1); // Blue glow
+
+            // Glow Effect
+            const glow = new BABYLON.GlowLayer("glow", scene);
+            glow.intensity = 2;
+
+            // Bike Animation Loop
+            scene.registerBeforeRender(() => {
+                // bike1.position.x += 0.1 * Math.sin(performance.now() * 0.25);
+                bike1.position.y += 1 * Math.sin(performance.now() * 0.25);
+
+                bike2.position.z -= 0.1 * Math.sin(performance.now() * 0.1);
+                bike3.position.y -= -1 * Math.sin(performance.now() * 0.1);
+                bike4.position.x -= 0.5 * Math.sin(performance.now() * 1);
+                hourglass.position.y -= .1 * Math.sin(performance.now() * 5);
+                hourglass.position.x -= .1 * Math.sin(performance.now() * -5);
+                hourglass.position.z -= .1 * Math.sin(performance.now() * 5);
+
+
+            });
+
+            return scene;
+        };
+
+        const scene = createScene();
+        engine.runRenderLoop(() => scene.render());
+        window.addEventListener("resize", () => engine.resize());
+    </script>
+</body>
+</html>
